@@ -1,0 +1,140 @@
+#!/usr/bin/env node
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+} from "@modelcontextprotocol/sdk/types.js";
+
+{{#if hasAuth}}
+const API_KEY = process.env.{{authEnvVar}};
+if (!API_KEY) {
+  console.error("Error: {{authEnvVar}} environment variable is not set.");
+  process.exit(1);
+}
+{{/if}}
+
+const BASE_URL = "{{baseUrl}}";
+
+const server = new Server(
+  { name: "{{serverName}}", version: "1.0.0" },
+  { capabilities: { tools: {} } }
+);
+
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [
+    {{#each tools}}
+    {
+      name: "{{name}}",
+      description: "{{description}}",
+      inputSchema: {
+        type: "object",
+        properties: {{{inputSchemaProperties}}},
+        required: {{{requiredFields}}},
+      },
+    },
+    {{/each}}
+  ],
+}));
+
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  const { name, arguments: args = {} } = request.params;
+
+  try {
+    {{#each tools}}
+    if (name === "{{name}}") {
+      {{#if ../isBearerAuth}}
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`,
+      };
+      {{else if ../isApiKeyAuth}}
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        "{{../apiKeyHeaderName}}": API_KEY ?? "",
+      };
+      {{else}}
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      {{/if}}
+
+      {{#if hasBody}}
+      // Separate path/query params from body params
+      const pathParams = new Set(["id"]); // adjust based on your path params
+      const bodyArgs: Record<string, unknown> = {};
+      const queryParams: Record<string, string> = {};
+      for (const [key, val] of Object.entries(args as Record<string, unknown>)) {
+        if (!pathParams.has(key)) bodyArgs[key] = val;
+      }
+
+      let url = `${BASE_URL}{{path}}`;
+      // Replace path parameters like {id}
+      for (const [key, val] of Object.entries(args as Record<string, unknown>)) {
+        url = url.replace(`{${key}}`, encodeURIComponent(String(val)));
+      }
+      if (Object.keys(queryParams).length > 0) {
+        url += "?" + new URLSearchParams(queryParams).toString();
+      }
+
+      const response = await fetch(url, {
+        method: "{{method}}",
+        headers,
+        body: JSON.stringify(bodyArgs),
+      });
+      {{else}}
+      let url = `${BASE_URL}{{path}}`;
+      // Replace path parameters like {id}
+      const remainingArgs: Record<string, string> = {};
+      for (const [key, val] of Object.entries(args as Record<string, unknown>)) {
+        if (url.includes(`{${key}}`)) {
+          url = url.replace(`{${key}}`, encodeURIComponent(String(val)));
+        } else {
+          remainingArgs[key] = String(val);
+        }
+      }
+      if (Object.keys(remainingArgs).length > 0) {
+        url += "?" + new URLSearchParams(remainingArgs).toString();
+      }
+
+      const response = await fetch(url, {
+        method: "{{method}}",
+        headers,
+      });
+      {{/if}}
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        return {
+          isError: true,
+          content: [{ type: "text", text: `API error ${response.status}: ${errorText}` }],
+        };
+      }
+
+      const data = await response.json();
+      return {
+        content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      };
+    }
+    {{/each}}
+
+    return {
+      isError: true,
+      content: [{ type: "text", text: `Unknown tool: ${name}` }],
+    };
+  } catch (error) {
+    return {
+      isError: true,
+      content: [
+        {
+          type: "text",
+          text: `Request failed: ${error instanceof Error ? error.message : String(error)}`,
+        },
+      ],
+    };
+  }
+});
+
+const transport = new StdioServerTransport();
+await server.connect(transport);
+console.error("{{title}} MCP server running on stdio");

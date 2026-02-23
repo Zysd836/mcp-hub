@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "{{serverName}}": {
+      "command": "node",
+      "args": ["index.js"],
+      "env": {
+        {{#if hasAuth}}
+        "{{authEnvVar}}": "${env:{{authEnvVar}}}"
+        {{/if}}
+      }
+    }
+  }
+}

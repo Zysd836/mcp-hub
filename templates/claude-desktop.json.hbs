@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "{{serverName}}": {
+      "command": "node",
+      "args": ["REPLACE_WITH_ABSOLUTE_PATH/index.js"]
+      {{#if hasAuth}}
+      ,
+      "env": {
+        "{{authEnvVar}}": "REPLACE_WITH_YOUR_API_KEY"
+      }
+      {{/if}}
+    }
+  }
+}
