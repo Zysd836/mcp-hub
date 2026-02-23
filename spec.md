@@ -58,15 +58,17 @@ User reviews: check/uncheck endpoints, search across all endpoints, edit tool de
 Click "Generate"
         ↓
 Download .zip:
-  - index.ts          (MCP server: try/catch + isError on every handler)
-  - .env.example      (auth env var with placeholder)
-  - .cursor/mcp.json  (ready-to-paste Cursor config)
-  - README.md         (3 steps: copy .env → npm install → npm start)
+  - index.ts                   (MCP server: try/catch + isError on every handler)
+  - .env.example               (auth env var with placeholder)
+  - configs/
+      cursor.json              (Cursor)
+      claude-desktop.json      (Claude Desktop)
+  - README.md                  (3 steps: copy .env → npm install → npm start)
         ↓
-npm start → paste mcp.json into Cursor → agent calls API tools directly
+npm start → add config for your client → agent calls API tools directly
 ```
 
-**Demo target — Phase A (Day 1-2):** Paste Stripe OpenAPI URL → 30 seconds → agent creates a payment intent inside Cursor chat.
+**Demo target — Phase A (Day 1-2):** Paste Stripe OpenAPI URL → 30 seconds → agent creates a payment intent inside Cursor chat. (Server works with any MCP-compatible client — demo targets: Cursor and Claude Desktop.)
 
 **Demo target — Phase B (Day 3, if registry is built):** Browse MCP Hub Registry → find `stripe-mcp` → click "Install to Cursor" → agent has Stripe tools immediately, no terminal needed.
 
@@ -91,6 +93,7 @@ npm start → paste mcp.json into Cursor → agent calls API tools directly
 - Codegen: TypeScript MCP server with `try/catch`, `isError`, `.env.example`, auto-generated README
 - Auth support: API Key header + Bearer token only (no OAuth2)
 - Web UI (Next.js): URL input → endpoint selection (AI pre-select + manual browse all + search + edit) → download .zip
+- Multi-client config generation: Cursor + Claude Desktop
 
 **Build if time allows (Day 3):**
 - Static registry demo page: hardcoded list of 5–10 generated servers (Stripe, GitHub, Shopify...)
@@ -134,7 +137,7 @@ Once agents rely on high-quality curated tools from a trusted registry, a raw im
 
 - **First mover** in the MCP registry space — no dominant player exists today
 - **Description engineering focus** — we optimize for agent reasoning quality, not just syntactic correctness; most competitors will stop at codegen
-- **Cursor ecosystem fit** — output is pre-configured for Cursor, which has the largest agent-developer user base right now
+- **Multi-client support** — configs generated for Cursor and Claude Desktop out of the box; server is standard MCP and works with any compatible client
 - **Publisher flywheel** — every published server makes the registry more valuable for consumers, who attract more publishers
 
 ---

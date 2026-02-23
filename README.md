@@ -31,10 +31,12 @@ Paste your OpenAPI spec URL. MCP Hub does the rest.
 Input:  https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json
 
 Output: stripe-mcp/
-        ├── index.ts         ← production-ready MCP server
-        ├── .env.example     ← STRIPE_API_KEY=sk_test_...
-        ├── .cursor/mcp.json ← drop into Cursor, done
-        └── README.md        ← 3-step setup
+        ├── index.ts                  ← production-ready MCP server
+        ├── .env.example              ← STRIPE_API_KEY=sk_test_...
+        ├── configs/
+        │   ├── cursor.json           ← Cursor
+        │   └── claude-desktop.json   ← Claude Desktop
+        └── README.md                 ← 3-step setup
 ```
 
 **From URL to agent-callable API in 30 seconds.**
@@ -55,8 +57,8 @@ Every tool handler ships with `try/catch`, returns `isError: true` on failure, a
 **Auth-aware**
 Detects Bearer and API Key auth from your spec. Generates a `.env.example` with the right variable names. No more "figure out auth yourself."
 
-**Cursor-first**
-Output includes a pre-configured `.cursor/mcp.json`. Add it to your project, restart Cursor, and your agent has access to your API immediately.
+**Works with Cursor and Claude Desktop**
+Configs generated out of the box for both. The MCP server follows the standard protocol — compatible with any MCP-supporting client.
 
 ---
 
