@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseSpec } from "@/lib/parser";
 import { selectEndpoints } from "@/lib/ai-mapper";
+import { MOCK_URLS } from "@/lib/mocks/petstore";
 
 export async function POST(req: NextRequest) {
   let url: string;
@@ -17,6 +18,11 @@ export async function POST(req: NextRequest) {
       { error: "Please provide a valid URL to an OpenAPI spec." },
       { status: 400 }
     );
+  }
+
+  // Return mock data for known URLs to avoid spending tokens during UI development
+  if (MOCK_URLS[url]) {
+    return NextResponse.json(MOCK_URLS[url]);
   }
 
   try {

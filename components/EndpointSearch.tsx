@@ -9,7 +9,8 @@ export default function EndpointSearch({ value, onChange }: EndpointSearchProps)
   return (
     <div className="relative flex-1">
       <svg
-        className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+        className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none"
+        style={{ color: "var(--color-text-muted)" }}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -26,14 +27,27 @@ export default function EndpointSearch({ value, onChange }: EndpointSearchProps)
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search endpoints..."
-        className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4
-                   text-sm placeholder:text-gray-400 focus:border-gray-900
-                   focus:outline-none focus:ring-1 focus:ring-gray-900"
+        className="w-full rounded-xl py-2.5 pl-9 pr-8 text-sm outline-none transition-all duration-200"
+        style={{
+          background: "var(--glass-bg)",
+          border: "1px solid var(--glass-border)",
+          color: "var(--color-text-primary)",
+          backdropFilter: "blur(var(--glass-blur))",
+        }}
+        onFocus={(e) => {
+          e.target.style.borderColor = "var(--color-primary)";
+          e.target.style.boxShadow = "0 0 0 3px var(--color-primary-muted)";
+        }}
+        onBlur={(e) => {
+          e.target.style.borderColor = "var(--glass-border)";
+          e.target.style.boxShadow = "none";
+        }}
       />
       {value && (
         <button
           onClick={() => onChange("")}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-sm transition-opacity hover:opacity-60"
+          style={{ color: "var(--color-text-muted)" }}
         >
           ×
         </button>

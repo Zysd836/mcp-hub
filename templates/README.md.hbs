@@ -32,8 +32,8 @@ Copy `configs/cursor.json` contents into your project's `.cursor/mcp.json`:
 {
   "mcpServers": {
     "{{serverName}}": {
-      "command": "node",
-      "args": ["index.js"],
+      "command": "npx",
+      "args": ["tsx", "index.ts"],
       "cwd": "/path/to/{{serverName}}"
     }
   }

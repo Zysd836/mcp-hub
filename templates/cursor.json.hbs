@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "{{serverName}}": {
-      "command": "node",
-      "args": ["index.js"],
+      "command": "npx",
+      "args": ["tsx", "index.ts"],
       "env": {
         {{#if hasAuth}}
-        "{{authEnvVar}}": "${env:{{authEnvVar}}}"
+        "{{authEnvVar}}": "{{cursorEnvRef}}"
         {{/if}}
       }
     }

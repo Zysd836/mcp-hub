@@ -34,6 +34,7 @@ function buildTemplateData(config: GenerateConfig): Record<string, unknown> {
     title: specMeta.title,
     baseUrl: specMeta.baseUrl,
     authEnvVar: auth.envVar ?? null,
+    cursorEnvRef: auth.envVar ? `\${env:${auth.envVar}}` : null,
     isBearerAuth: auth.type === "bearer",
     isApiKeyAuth: auth.type === "apikey",
     apiKeyHeaderName: auth.headerName ?? "X-API-Key",

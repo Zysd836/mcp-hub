@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "{{serverName}}": {
-      "command": "node",
-      "args": ["REPLACE_WITH_ABSOLUTE_PATH/index.js"]
+      "command": "npx",
+      "args": ["tsx", "REPLACE_WITH_ABSOLUTE_PATH/index.ts"]
       {{#if hasAuth}}
       ,
       "env": {
